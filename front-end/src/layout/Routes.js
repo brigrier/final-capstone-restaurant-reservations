@@ -1,34 +1,28 @@
 import React from "react";
-
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
 import NotFound from "./NotFound";
 import { today } from "../utils/date-time";
+import NewReservation from "../new-reservation/NewReservation";
 
 /**
  * Defines all the routes for the application.
  *
- * You will need to make changes to this file.
- *
  * @returns {JSX.Element}
  */
-function Routes() {
+function AppRoutes() {
   return (
-    <Switch>
-      <Route exact={true} path="/">
-        <Redirect to={"/dashboard"} />
-      </Route>
-      <Route exact={true} path="/reservations">
-        <Redirect to={"/dashboard"} />
-      </Route>
-      <Route path="/dashboard">
-        <Dashboard date={today()} />
-      </Route>
-      <Route>
-        <NotFound />
-      </Route>
-    </Switch>
+    <Routes>
+      <Route path="/" element={<Navigate to="/dashboard" />} />
+      <Route path="/reservations" element={<Navigate to="/dashboard" />} />
+      <Route path="/dashboard" element={<Dashboard date={today()} />} />
+      <Route path="/reservations/new" element={<NewReservation />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
-export default Routes;
+export default AppRoutes;
+
+
+
