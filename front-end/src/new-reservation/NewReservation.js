@@ -30,7 +30,10 @@ const NewReservation = () => {
   };
 
   const validateForm = () => {
-    const reservationDateTime = moment(`${reservationDate} ${reservationTime}`, "YYYY-MM-DD HH:mm");
+    const reservationDateTime = moment(
+      `${reservationDate} ${reservationTime}`,
+      "YYYY-MM-DD HH:mm"
+    );
     const now = moment();
 
     if (reservationDateTime.day() === 2) {
@@ -72,7 +75,7 @@ const NewReservation = () => {
             <input
               type="text"
               id="first_name"
-               name="first_name"
+              name="first_name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
@@ -141,7 +144,9 @@ const NewReservation = () => {
             />
           </div>
           <button type="submit">Submit</button>
-          <button type="button" onClick={handleCancel}>Cancel</button>
+          <button type="button" onClick={handleCancel}>
+            Cancel
+          </button>
         </form>
       </div>
     </div>
@@ -149,4 +154,3 @@ const NewReservation = () => {
 };
 
 export default NewReservation;
-
