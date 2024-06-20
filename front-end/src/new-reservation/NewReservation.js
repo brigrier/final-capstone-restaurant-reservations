@@ -118,6 +118,8 @@ const NewReservation = () => {
               value={reservationDate}
               onChange={(e) => setReservationDate(e.target.value)}
               required
+              placeholder="YYYY-MM-DD" 
+              pattern="\d{4}-\d{2}-\d{2}"
               className="form-control"
             />
           </div>
@@ -130,6 +132,8 @@ const NewReservation = () => {
               value={reservationTime}
               onChange={(e) => setReservationTime(e.target.value)}
               required
+              placeholder="HH:MM" 
+              pattern="[0-9]{2}:[0-9]{2}"
               className="form-control"
             />
           </div>
