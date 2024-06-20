@@ -66,7 +66,9 @@ const NewReservation = () => {
 
   return (
     <div>
+      <div>
       <h2>Enter new reservation</h2>
+      </div>
       {error && <div className="alert alert-danger">{error}</div>}
       <div>
         <form onSubmit={handleSubmit}>
@@ -141,6 +143,7 @@ const NewReservation = () => {
               onChange={(e) => setPeople(e.target.value)}
               required
               className="form-control"
+              min="1"
             />
           </div>
           <button type="submit">Submit</button>
