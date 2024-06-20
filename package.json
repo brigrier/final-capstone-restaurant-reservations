@@ -49,6 +49,7 @@
   "author": "Thinkful, Inc.",
   "license": "UNLICENSED",
   "dependencies": {
+    "moment": "^2.30.1",
     "react": "^18.3.1",
     "react-router-dom": "^6.23.1"
   }

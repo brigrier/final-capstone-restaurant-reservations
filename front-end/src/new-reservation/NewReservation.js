@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import moment from "moment";
 
 const NewReservation = () => {
   const [firstName, setFirstName] = useState("");
@@ -7,33 +8,63 @@ const NewReservation = () => {
   const [reservationDate, setReservationDate] = useState("");
   const [reservationTime, setReservationTime] = useState("");
   const [people, setPeople] = useState("");
+  const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add form submission logic here
-    console.log({
-      firstName,
-      lastName,
-      mobileNumber,
-      reservationDate,
-      reservationTime,
-      people,
-    });
+    const newError = validateForm();
+    if (newError) {
+      setError(newError);
+    } else {
+      setError(null);
+      // Proceed with form submission logic
+      console.log({
+        firstName,
+        lastName,
+        mobileNumber,
+        reservationDate,
+        reservationTime,
+        people,
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const reservationDateTime = moment(`${reservationDate} ${reservationTime}`, "YYYY-MM-DD HH:mm");
+    const now = moment();
+
+    if (reservationDateTime.day() === 2) {
+      return "The restaurant is closed on Tuesdays. Please choose another date.";
+    }
+    if (reservationDateTime.isBefore(now)) {
+      return "Reservations cannot be made in the past. Please choose a future date and time.";
+    }
+    const openingTime = moment(`${reservationDate} 10:30`, "YYYY-MM-DD HH:mm");
+    const closingTime = moment(`${reservationDate} 21:30`, "YYYY-MM-DD HH:mm");
+
+    if (reservationDateTime.isBefore(openingTime)) {
+      return "Reservations cannot be made before 10:30 AM. Please choose a later time.";
+    }
+    if (reservationDateTime.isAfter(closingTime)) {
+      return "Reservations cannot be made after 9:30 PM. Please choose an earlier time.";
+    }
+    return null;
   };
 
   const handleCancel = () => {
-    // Add cancel logic here
     setFirstName("");
     setLastName("");
     setMobileNumber("");
     setReservationDate("");
     setReservationTime("");
     setPeople("");
+    setError(null);
   };
 
   return (
     <div>
       <h2>Enter new reservation</h2>
+      {error && <div className="alert alert-danger">{error}</div>}
       <div>
         <form onSubmit={handleSubmit}>
           <div>
@@ -41,6 +72,7 @@ const NewReservation = () => {
             <input
               type="text"
               id="first_name"
+               name="first_name"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
@@ -52,6 +84,7 @@ const NewReservation = () => {
             <input
               type="text"
               id="last_name"
+              name="last_name"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
@@ -63,6 +96,7 @@ const NewReservation = () => {
             <input
               type="text"
               id="mobile_number"
+              name="mobile_number"
               value={mobileNumber}
               onChange={(e) => setMobileNumber(e.target.value)}
               placeholder="(XXX)-XXX-XXXX"
@@ -73,11 +107,11 @@ const NewReservation = () => {
           <div>
             <label htmlFor="reservation_date">Date of reservation</label>
             <input
-              type="text"
+              type="date"
               id="reservation_date"
+              name="reservation_date"
               value={reservationDate}
               onChange={(e) => setReservationDate(e.target.value)}
-              placeholder="Name of the deck"
               required
               className="form-control"
             />
@@ -85,8 +119,9 @@ const NewReservation = () => {
           <div>
             <label htmlFor="reservation_time">Time of reservation</label>
             <input
-              type="text"
+              type="time"
               id="reservation_time"
+              name="reservation_time"
               value={reservationTime}
               onChange={(e) => setReservationTime(e.target.value)}
               required
@@ -98,6 +133,7 @@ const NewReservation = () => {
             <input
               type="number"
               id="people"
+              name="people"
               value={people}
               onChange={(e) => setPeople(e.target.value)}
               required
