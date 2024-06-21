@@ -67,3 +67,24 @@ export async function listReservations(params, signal) {
     .then(formatReservationDate)
     .then(formatReservationTime);
 }
+
+export async function createReservation(reservation, signal) {
+  const url = `${API_BASE_URL}/reservations`;
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ data: reservation }),
+    signal,
+  };
+
+  const response = await fetch(url, options);
+  const responseBody = await response.json();
+  
+  if (!response.ok) {
+    throw new Error(responseBody.error || 'An error occurred while creating the reservation.');
+  }
+  
+  return responseBody.data;
+}
