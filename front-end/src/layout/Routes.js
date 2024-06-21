@@ -18,6 +18,7 @@ function AppRoutes() {
       <Route path="/reservations" element={<Navigate to="/dashboard" />} />
       <Route path="/dashboard" element={<Dashboard date={today()} />} />
       <Route path="/reservations/new" element={<NewReservation />} />
+      <Route path="/tables"/>
       <Route path="/tables/new" element={<NewTable />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

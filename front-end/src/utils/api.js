@@ -88,3 +88,34 @@ export async function createReservation(reservation, signal) {
   
   return responseBody.data;
 }
+
+
+
+//    TABLES API    
+
+export async function listTables(params, signal) {
+  const url = new URL(`${API_BASE_URL}/tables`);
+  Object.entries(params).forEach(([key, value]) => url.searchParams.append(key, value.toString()));
+  return await fetchJson(url, { headers, signal }, []);
+}
+
+export async function createTable(table, signal) {
+  const url = `${API_BASE_URL}/tables`;
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ data: table }),
+    signal,
+  };
+
+  const response = await fetch(url, options);
+  const responseBody = await response.json();
+
+  if (!response.ok) {
+    throw new Error(responseBody.error || 'An error occurred while creating the table.');
+  }
+
+  return responseBody.data;
+}
