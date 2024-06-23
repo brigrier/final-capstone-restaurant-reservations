@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, listTables } from "../utils/api";
+import { useNavigate } from "react-router-dom";
+import { listReservations, listTables, finishTable as apiFinishTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { today, next, previous } from "../utils/date-time";
 
@@ -9,6 +10,7 @@ function Dashboard({ initialDate }) {
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(loadDashboard, [date]);
 
@@ -34,6 +36,21 @@ function Dashboard({ initialDate }) {
     return () => abortController.abort();
   }, []);
 
+  const finishTable = async (tableId) => {
+    const confirmed = window.confirm(
+      "Is this table ready to seat new guests? This cannot be undone."
+    );
+    if (confirmed) {
+      try {
+        const abortController = new AbortController();
+        await apiFinishTable(tableId, abortController.signal);
+        loadDashboard();
+      } catch (error) {
+        setTablesError(error);
+      }
+    }
+  };
+
   const reservationsTableRows = reservations.map((reservation, index) => (
     <tr key={index}>
       <th scope="row">{index + 1}</th>
@@ -53,7 +70,19 @@ function Dashboard({ initialDate }) {
       <td>{table.table_name}</td>
       <td>{table.capacity}</td>
       <td data-table-id-status={table.table_id}>
-        {table.reservation_id ? "Occupied" : "Free"}
+        {table.reservation_id ? (
+          <>
+            Occupied
+            <button
+              onClick={() => finishTable(table.table_id)}
+              data-table-id-finish={table.table_id}
+            >
+              Finish
+            </button>
+          </>
+        ) : (
+          "Free"
+        )}
       </td>
     </tr>
   ));
@@ -105,4 +134,3 @@ function Dashboard({ initialDate }) {
 }
 
 export default Dashboard;
-
