@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import { listReservations, listTables, finishTable as apiFinishTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { today, next, previous } from "../utils/date-time";
@@ -10,7 +10,7 @@ function Dashboard({ initialDate }) {
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
-  const navigate = useNavigate();
+ // const navigate = useNavigate();
 
   useEffect(loadDashboard, [date]);
 
