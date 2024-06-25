@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-//import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useCallback } from "react";
 import { listReservations, listTables, finishTable as apiFinishTable } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { today, next, previous } from "../utils/date-time";
@@ -10,31 +9,71 @@ function Dashboard({ initialDate }) {
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
- // const navigate = useNavigate();
 
-  useEffect(loadDashboard, [date]);
+  const formatDate = (date) => {
+    const d = new Date(date);
+    let month = '' + (d.getMonth() + 1);
+    let day = '' + d.getDate();
+    const year = d.getFullYear();
 
-  function loadDashboard() {
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+  };
+
+  const loadDashboard = useCallback(() => {
+    console.log("Loading dashboard for date:", date);
     const abortController = new AbortController();
     setReservationsError(null);
-    listReservations({ date }, abortController.signal)
-      .then(setReservations)
-      .catch(setReservationsError);
+    listReservations({ date: formatDate(date) }, abortController.signal)
+      .then((data) => {
+        console.log("Fetched reservations:", data);
+        setReservations(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching reservations:", error);
+        setReservationsError(error);
+      });
     return () => abortController.abort();
-  }
+  }, [date]);
 
-  const handlePreviousDay = () => setDate(previous(date));
-  const handleNextDay = () => setDate(next(date));
-  const handleToday = () => setDate(today());
+  useEffect(() => {
+    loadDashboard();
+  }, [date, loadDashboard]);
 
   useEffect(() => {
     const abortController = new AbortController();
     setTablesError(null);
     listTables({}, abortController.signal)
-      .then(setTables)
-      .catch(setTablesError);
+      .then((data) => {
+        console.log("Fetched tables:", data);
+        setTables(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching tables:", error);
+        setTablesError(error);
+      });
     return () => abortController.abort();
   }, []);
+
+  const handlePreviousDay = () => {
+    const newDate = previous(date);
+    console.log("Previous day:", newDate);
+    setDate(newDate);
+  };
+  
+  const handleNextDay = () => {
+    const newDate = next(date);
+    console.log("Next day:", newDate);
+    setDate(newDate);
+  };
+  
+  const handleToday = () => {
+    const newDate = today();
+    console.log("Today:", newDate);
+    setDate(newDate);
+  };
 
   const finishTable = async (tableId) => {
     const confirmed = window.confirm(
@@ -91,7 +130,7 @@ function Dashboard({ initialDate }) {
     <main>
       <h1>Dashboard</h1>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for {date}</h4>
+        <h4 className="mb-0">Reservations for {formatDate(date)}</h4>
       </div>
       <div>
         <button onClick={handlePreviousDay}>Previous Day</button>
@@ -114,6 +153,9 @@ function Dashboard({ initialDate }) {
           </thead>
           <tbody>{reservationsTableRows}</tbody>
         </table>
+        {reservations.length === 0 && (
+          <p>No reservations found for the given date.</p>
+        )}
       </div>
       <div>
         <h4>Tables</h4>
