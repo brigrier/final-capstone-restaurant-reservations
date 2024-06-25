@@ -112,7 +112,7 @@ const NewReservation = () => {
             name="mobile_number"
             value={mobileNumber}
             onChange={(e) => setMobileNumber(e.target.value)}
-            placeholder="(XXX)-XXX-XXXX"
+            placeholder="XXX-XXX-XXXX"
             required
             className="form-control"
           />

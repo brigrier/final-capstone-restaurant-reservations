@@ -1,4 +1,4 @@
-const { isDate } = require("moment");
+const moment = require("moment");
 const service = require("./reservations.service");
 
 // VALIDATION
@@ -26,9 +26,34 @@ function hasValidProps(req, res, next) {
   next();
 }
 
+function isValidDate(date) {
+  const dateFormat = /^\d{4}-\d{2}-\d{2}$/;
+  if (dateFormat.test(date)) {
+    return moment(date, "YYYY-MM-DD", true).isValid();
+  }
+  return false;
+}
+
+function isValidTime(time) {
+  const timeFormat = /^\d{2}:\d{2}$/;
+  if (timeFormat.test(time)) {
+    return moment(time, "HH:mm", true).isValid();
+  }
+  return false;
+}
+
+function isValidNumber(value) {
+  return !isNaN(value) && typeof value === "number";
+}
+
 function hasProperties(...properties) {
   return function (req, res, next) {
     const { data = {} } = req.body;
+    const reservationDateTime = moment(
+      `${data.reservation_date} ${data.reservation_time}`,
+      "YYYY-MM-DD HH:mm"
+    );
+    const now = moment();
 
     try {
       properties.forEach((property) => {
@@ -38,16 +63,22 @@ function hasProperties(...properties) {
           throw error;
         }
 
-        if (property === "reservation_date" && !isValidDate(data[property])) {
-          const error = new Error(`'reservation_date' must be a valid date.`);
-          error.status = 400;
-          throw error;
+        if (property === "reservation_date") {
+          const reservationDate = moment(data[property], "YYYY-MM-DD", true);
+          if (!isValidDate(data[property]) || reservationDate.day() === 2) {
+            const error = new Error(`closed`);
+            error.status = 400;
+            throw error;
+          }
         }
 
-        if (property === "reservation_time" && !isValidTime(data[property])) {
-          const error = new Error(`'reservation_time' must be a valid time.`);
-          error.status = 400;
-          throw error;
+        if (property === "reservation_time") {
+          const reservationTime = moment(data[property], "HH:mm", true);
+          if (!isValidTime(data[property]) || reservationDateTime.isBefore(now)) {
+            const error = new Error(`future`);
+            error.status = 400;
+            throw error;
+          }
         }
 
         if (property === "people" && !isValidNumber(data[property])) {
@@ -63,38 +94,6 @@ function hasProperties(...properties) {
     }
   };
 }
-
-const dateFormat = /\d\d\d\d-\d\d-\d\d/;
-const timeFormat = /\d\d:\d\d/;
-
-function isValidDate(dateString) {
-  if (!dateFormat.test(dateString)) {
-    const error = new Error(`reservation_date`);
-    error.status = 400;
-    throw error
-  }
-  return !isNaN(Date.parse(dateString));
-}
-
-function isValidTime(timeString) {
-  if (!timeFormat.test(timeString)) {
-    const error = new Error("reservation_time");
-    error.status = 400;
-    throw error
-  }
-  return /^([01]\d|2[0-3]):([0-5]\d)$/.test(timeString);
-}
-
-function isValidNumber(value) {
-  if (isNaN(value) ) {
-    const error = new Error(`people`);
-    error.status = 400;
-    throw error
-  }
-
-  return !isNaN(value) && typeof value === "number";
-}
-
 
 // GET reservations
 async function list(req, res, next) {
