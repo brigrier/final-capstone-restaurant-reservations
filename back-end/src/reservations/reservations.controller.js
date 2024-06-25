@@ -54,6 +54,8 @@ function hasProperties(...properties) {
       "YYYY-MM-DD HH:mm"
     );
     const now = moment();
+    const openingTime = moment(data.reservation_date + " 10:30", "YYYY-MM-DD HH:mm");
+    const closingTime = moment(data.reservation_date + " 21:30", "YYYY-MM-DD HH:mm");
 
     try {
       properties.forEach((property) => {
@@ -65,8 +67,11 @@ function hasProperties(...properties) {
 
         if (property === "reservation_date") {
           const reservationDate = moment(data[property], "YYYY-MM-DD", true);
-          if (!isValidDate(data[property]) || reservationDate.day() === 2) {
-            const error = new Error(`closed`);
+          if (
+            !isValidDate(data[property]) ||
+            reservationDate.day() === 2
+          ) {
+            const error = new Error(`'reservation_date' must be a valid date and not a Tuesday.`);
             error.status = 400;
             throw error;
           }
@@ -74,8 +79,13 @@ function hasProperties(...properties) {
 
         if (property === "reservation_time") {
           const reservationTime = moment(data[property], "HH:mm", true);
-          if (!isValidTime(data[property]) || reservationDateTime.isBefore(now)) {
-            const error = new Error(`future`);
+          if (
+            !isValidTime(data[property]) ||
+            reservationDateTime.isBefore(now) ||
+            reservationDateTime.isBefore(openingTime) ||
+            reservationDateTime.isAfter(closingTime)
+          ) {
+            const error = new Error(`'reservation_time' must be a valid time, not in the past, and within business hours (10:30 AM to 9:30 PM).`);
             error.status = 400;
             throw error;
           }
