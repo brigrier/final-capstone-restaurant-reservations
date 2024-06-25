@@ -1,5 +1,5 @@
 exports.seed = function(knex) {
-  return knex("reservations").insert([
+  return knex("tables").insert([
     {
       "table_name": "Bar #1",
       "capacity": "1"
