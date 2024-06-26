@@ -1,35 +1,34 @@
 const knex = require("../db/connection");
 
-//GET
+// GET
 function list() {
-  return knex("tables").select("*");
+  return knex("tables").select("*").orderBy("table_name");
 }
 
-//POST
+// POST
 function create(table) {
-    return knex("tables")
+  return knex("tables")
     .insert(table)
     .returning("*")
     .then((createdRecords) => createdRecords[0]);
 }
 
-//READ FOR PUT USAGE
+// READ FOR PUT USAGE
 function read(table_id) {
   return knex("tables").select("*").where({ table_id }).first();
 }
 
-//PUT
-function update(updatedTables) {
+// PUT
+function update(updatedTable) {
   return knex("tables")
-    .select("*")
-    .where({ table_id: updatedTables.table_id })
-    .update(updatedTables, "*");
+    .where({ table_id: updatedTable.table_id })
+    .update(updatedTable, "*")
+    .then((updatedRecords) => updatedRecords[0]);
 }
-
 
 module.exports = {
-    list,
-    create,
-    read, 
-    update
-}
+  list,
+  create,
+  read,
+  update,
+};
