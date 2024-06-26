@@ -1,4 +1,5 @@
 const service = require("./tables.service");
+const reservationsService = require("../reservations/reservations.service"); // Assuming you have a service for reservations
 
 // VALIDATION
 const validProperties = ["table_name", "capacity"];
@@ -41,7 +42,7 @@ function hasProperties(...properties) {
         }
 
         if (property === "capacity" && !isValidNumber(data[property])) {
-          const error = new Error(`''capacity' must be a valid number.`);
+          const error = new Error(`'capacity' must be a valid number.`);
           error.status = 400;
           throw error;
         }
@@ -53,6 +54,69 @@ function hasProperties(...properties) {
   };
 }
 
+// Middleware to check if the table exists
+async function tableExists(req, res, next) {
+  const table = await service.read(req.params.tableId);
+  if (table) {
+    res.locals.table = table;
+    return next();
+  }
+  next({ status: 404, message: "Table cannot be found." });
+}
+
+// Middleware to check if reservation data is provided and valid
+function reservationDataProvided(req, res, next) {
+  const { reservation_id } = req.body.data || {};
+  if (!reservation_id) {
+    return next({ status: 400, message: "reservation_id is required" });
+  }
+  next();
+}
+
+// Middleware to check if the reservation exists
+async function reservationExists(req, res, next) {
+  const { reservation_id } = req.body.data;
+  const reservation = await reservationsService.read(reservation_id);
+  if (reservation) {
+    res.locals.reservation = reservation;
+    return next();
+  }
+  next({ status: 404, message: `Reservation ${reservation_id} cannot be found.` });
+}
+
+// Middleware to check if the table has sufficient capacity and is not already occupied
+function tableHasCapacityAndIsAvailable(req, res, next) {
+  const table = res.locals.table;
+  const reservation = res.locals.reservation;
+
+  if (table.capacity < reservation.people) {
+    return next({ status: 400, message: "Table does not have sufficient capacity." });
+  }
+
+  if (table.reservation_id) {
+    return next({ status: 400, message: "Table is occupied." });
+  }
+
+  next();
+}
+
+// Controller function to update the table with the reservation
+async function seatReservation(req, res, next) {
+  const { table } = res.locals;
+  const { reservation_id } = req.body.data;
+
+  const updatedTable = {
+    ...table,
+    reservation_id,
+  };
+
+  try {
+    await service.update(updatedTable);
+    res.status(200).json({ data: updatedTable });
+  } catch (error) {
+    next(error);
+  }
+}
 
 // GET
 async function list(req, res) {
@@ -70,16 +134,6 @@ async function create(req, res, next) {
   }
 }
 
-// Middleware to check if the table exists
-async function tableExists(req, res, next) {
-  const table = await service.read(req.params.tableId);
-  if (table) {
-    res.locals.table = table;
-    return next();
-  }
-  next({ status: 404, message: "Table cannot be found." });
-}
-
 // PUT
 async function update(req, res, next) {
   const updatedTable = {
@@ -87,7 +141,7 @@ async function update(req, res, next) {
     ...req.body.data,
     table_id: res.locals.table.table_id,
   };
-  
+
   try {
     await service.update(updatedTable);
     res.json({ data: updatedTable });
@@ -100,4 +154,11 @@ module.exports = {
   list,
   create: [hasProperties("table_name", "capacity"), hasValidProps, create],
   update: [tableExists, hasProperties("reservation_id"), update],
+  seatReservation: [
+    tableExists,
+    reservationDataProvided,
+    reservationExists,
+    tableHasCapacityAndIsAvailable,
+    seatReservation,
+  ],
 };
