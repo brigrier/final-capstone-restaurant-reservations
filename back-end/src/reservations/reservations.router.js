@@ -11,7 +11,8 @@ router.route("/")
   .get(controller.list)
   .post(controller.create)
   .all(methodNotAllowed)
-
+router.route("/:reservationId")
+  .get(controller.read)
 
     
 

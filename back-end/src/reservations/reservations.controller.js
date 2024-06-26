@@ -105,6 +105,18 @@ function hasProperties(...properties) {
   };
 }
 
+async function reservationExists(req, res, next) {
+  const { reservationId } = req.params;
+  const reservation = await service.read(reservationId);
+  if (reservation) {
+      res.locals.reservation = reservation;
+      return next();
+  } else {
+      next({ status: 404, message: "Reservation not found" });
+  }
+}
+
+
 // GET reservations
 async function list(req, res, next) {
   const { date } = req.query;
@@ -137,6 +149,12 @@ async function create(req, res, next) {
   }
 }
 
+//  READ
+async function read(req, res) {
+  const { reservation: data } = res.locals;
+  res.json({ data });
+}
+
 module.exports = {
   list,
   create: [
@@ -151,4 +169,5 @@ module.exports = {
     ),
     create,
   ],
+  read: [reservationExists, read],
 };

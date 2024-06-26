@@ -13,8 +13,23 @@ function create(table) {
     .then((createdRecords) => createdRecords[0]);
 }
 
+//READ FOR PUT USAGE
+function read(table_id) {
+  return knex("tables").select("*").where({ table_id }).first();
+}
+
+//PUT
+function update(updatedTables) {
+  return knex("tables")
+    .select("*")
+    .where({ table_id: updatedTables.table_id })
+    .update(updatedTables, "*");
+}
+
 
 module.exports = {
     list,
-    create
+    create,
+    read, 
+    update
 }
