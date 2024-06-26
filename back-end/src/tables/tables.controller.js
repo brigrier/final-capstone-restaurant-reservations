@@ -18,6 +18,10 @@ function hasValidProps(req, res, next) {
   next();
 }
 
+function isValidNumber(value) {
+  return !isNaN(value) && typeof value === "number";
+}
+
 function hasProperties(...properties) {
   return function (req, res, next) {
     const { data = {} } = req.body;
@@ -36,8 +40,8 @@ function hasProperties(...properties) {
           throw error;
         }
 
-        if (property === "capacity" && data[property] < 1) {
-          const error = new Error(`'capacity' must be at least 1.`);
+        if (property === "capacity" && !isValidNumber(data[property])) {
+          const error = new Error(`''capacity' must be a valid number.`);
           error.status = 400;
           throw error;
         }
@@ -48,6 +52,7 @@ function hasProperties(...properties) {
     }
   };
 }
+
 
 // GET
 async function list(req, res) {
