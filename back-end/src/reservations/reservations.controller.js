@@ -139,6 +139,19 @@ async function list(req, res, next) {
   }
 }
 
+
+async function search(req, res, next) {
+  const { mobileNumber } = req.params;
+
+  try {
+    const reservations = await service.search(mobileNumber);
+    res.json(reservations);
+  } catch (error) {
+    next(error);
+  }
+}
+
+
 // POST
 async function create(req, res, next) {
   try {
@@ -174,6 +187,7 @@ async function update(req, res, next) {
 
 module.exports = {
   list,
+  search,
   create: [
     hasValidProps,
     hasProperties(

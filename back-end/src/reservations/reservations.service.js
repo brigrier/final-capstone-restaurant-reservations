@@ -8,6 +8,13 @@ function list(reservation_date) {
         .orderBy("reservation_time");
 }
 
+//GET BY NUMBER
+function search(mobile_number) {
+    return knex("reservations")
+        .select("*")
+        .where({ mobile_number })
+}
+
 //POST
 function create(reservation) {
     return knex("reservations")
@@ -35,6 +42,7 @@ function update(updatedReservations) {
 
 module.exports = {
     list,
+    search,
     create,
     read,
     update
