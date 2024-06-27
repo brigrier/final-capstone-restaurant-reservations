@@ -11,9 +11,12 @@ function list(reservation_date) {
 //GET BY NUMBER
 function search(mobile_number) {
     return knex("reservations")
-        .select("*")
-        .where({ mobile_number })
-}
+      .whereRaw(
+        "translate(mobile_number, '() -', '') like ?",
+        `%${mobile_number.replace(/\D/g, "")}%`
+      )
+      .orderBy("reservation_date");
+ }
 
 //POST
 function create(reservation) {
