@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { listReservations } from "../utils/api";
+import { listReservations, updateReservationStatus } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 const Search = () => {
@@ -18,12 +18,32 @@ const Search = () => {
     }
   };
 
+  const handleCancel = async (reservationId) => {
+    const confirmed = window.confirm(
+      "Do you want to cancel this reservation? This cannot be undone."
+    );
+    if (confirmed) {
+      try {
+        const abortController = new AbortController();
+        await updateReservationStatus(reservationId, "cancelled", abortController.signal);
+      } catch (error) {
+        setReservationsError(error);
+      }
+    }
+  }
+
   const reservationsTableRows = reservations.map((reservation, index) => (
     <tr key={index}>
       <th scope="row">{index + 1}</th>
       <td>{`${reservation.first_name} ${reservation.last_name}`}</td>
       <td>{reservation.people}</td>
       <td data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
+      <td>
+      <a href={`/reservations/${reservation.reservation_id}/edit`} className="btn btn-primary">Edit</a>
+      </td>
+      <td>
+        <button data-reservation-id-cancel={reservation.reservation_id} onClick={() => handleCancel(reservation.reservation_id)}>Cancel</button>
+      </td>
     </tr>
   ));
 
@@ -60,7 +80,7 @@ const Search = () => {
               <th scope="col">#</th>
               <th scope="col">Name</th>
               <th scope="col">People In Party</th>
-              <th scope="col">Status</th>
+              <th scope="col" colSpan="3">Status</th>
             </tr>
           </thead>
           <tbody>{reservationsTableRows}</tbody>

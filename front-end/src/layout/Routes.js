@@ -25,7 +25,7 @@ function AppRoutes() {
       <Route path="/tables"/>
       <Route path="/tables/new" element={<NewTable />} />
       <Route path="/search" element={<Search />} />
-      <Route path="/edit" element={<Edit />} />
+      <Route path="/reservations/:reservation_id/edit" element={<Edit />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
