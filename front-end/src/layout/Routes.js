@@ -7,6 +7,7 @@ import NewReservation from "../new-reservation/NewReservation";
 import NewTable from "../new-table/NewTable";
 import Seat from "../seat/Seat";
 import Search from "../search/Search"
+import Edit from "../edit/Edit"
 
 /**
  * Defines all the routes for the application.
@@ -24,6 +25,7 @@ function AppRoutes() {
       <Route path="/tables"/>
       <Route path="/tables/new" element={<NewTable />} />
       <Route path="/search" element={<Search />} />
+      <Route path="/edit" element={<Edit />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

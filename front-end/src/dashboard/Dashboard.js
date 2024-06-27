@@ -111,6 +111,12 @@ function Dashboard({ initialDate }) {
         )}
       </td>
       <td data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
+      <td>
+        <button>Edit</button>
+      </td>
+      <td>
+        <button data-reservation-id-cancel={reservation.reservation_id}>Cancel</button>
+      </td>
     </tr>
   ));
 
@@ -160,7 +166,7 @@ function Dashboard({ initialDate }) {
               <th scope="col">Name</th>
               <th scope="col">People In Party</th>
               <th scope="col">Ready to Seat</th>
-              <th scope="col">Status</th>
+              <th scope="col" colSpan="3">Status</th>
             </tr>
           </thead>
           <tbody>{reservationsTableRows}</tbody>
