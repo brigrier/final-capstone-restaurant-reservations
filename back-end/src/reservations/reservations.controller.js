@@ -155,6 +155,23 @@ async function read(req, res) {
   res.json({ data });
 }
 
+//PUT
+async function update(req, res, next) {
+  const updatedReservation = {
+    ...res.locals.reservation,
+    ...req.body.data,
+    reservation_id: res.locals.reservation.reservation_id,
+  };
+
+  try {
+    await service.update(updatedReservation);
+    res.json({ data: updatedReservation });
+  } catch (error) {
+    next(error);
+  }
+}
+
+
 module.exports = {
   list,
   create: [
@@ -170,4 +187,5 @@ module.exports = {
     create,
   ],
   read: [reservationExists, read],
+  update: [reservationExists, update],
 };
