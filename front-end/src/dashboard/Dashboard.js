@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { listReservations, listTables, finishTable as apiFinishTable } from "../utils/api";
+import { listReservations, listTables, updateReservationStatus, finishTable as apiFinishTable } from "../utils/api"; // Assuming you have this function in your API utils
 import ErrorAlert from "../layout/ErrorAlert";
 import { today, next, previous } from "../utils/date-time";
 
@@ -90,16 +90,27 @@ function Dashboard({ initialDate }) {
     }
   };
 
+  const handleSeatReservation = async (reservationId) => {
+    try {
+      const abortController = new AbortController();
+      await updateReservationStatus(reservationId, "seated", abortController.signal);
+      loadDashboard();
+    } catch (error) {
+      setReservationsError(error);
+    }
+  };
+
   const reservationsTableRows = reservations.map((reservation, index) => (
     <tr key={index}>
       <th scope="row">{index + 1}</th>
       <td>{`${reservation.first_name} ${reservation.last_name}`}</td>
       <td>{reservation.people}</td>
       <td>
-        <a href={`/reservations/${reservation.reservation_id}/seat`}>
-          <button>Seat</button>
-        </a>
+        {reservation.status === "booked" && (
+          <button onClick={() => handleSeatReservation(reservation.reservation_id)}>Seat</button>
+        )}
       </td>
+      <td data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
     </tr>
   ));
 
@@ -149,6 +160,7 @@ function Dashboard({ initialDate }) {
               <th scope="col">Name</th>
               <th scope="col">People In Party</th>
               <th scope="col">Ready to Seat</th>
+              <th scope="col">Status</th>
             </tr>
           </thead>
           <tbody>{reservationsTableRows}</tbody>
@@ -176,3 +188,4 @@ function Dashboard({ initialDate }) {
 }
 
 export default Dashboard;
+
