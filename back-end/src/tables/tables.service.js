@@ -26,9 +26,15 @@ function update(updatedTable) {
     .then((updatedRecords) => updatedRecords[0]);
 }
 
+//DELETE
+function destroy(table_id) {
+  return knex("tables").where({ table_id }).del();
+}
+
 module.exports = {
   list,
   create,
   read,
   update,
+  destroy,
 };

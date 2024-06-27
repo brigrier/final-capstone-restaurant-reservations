@@ -150,6 +150,12 @@ async function update(req, res, next) {
   }
 }
 
+//DELETE
+async function destroy(req, res) {
+  await service.destroy(res.locals.table.table_id);
+  res.sendStatus(204);
+}
+
 module.exports = {
   list,
   create: [hasProperties("table_name", "capacity"), hasValidProps, create],
@@ -161,4 +167,5 @@ module.exports = {
     tableHasCapacityAndIsAvailable,
     seatReservation,
   ],
+  delete: [tableExists, destroy],
 };

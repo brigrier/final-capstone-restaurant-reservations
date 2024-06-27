@@ -14,6 +14,8 @@ router.route("/")
     .all(methodNotAllowed)
 router.route("/:tableId/seat")
     .put(controller.seatReservation)
+    .delete(controller.delete)
     .all(methodNotAllowed);
 
+    
 module.exports = router;
