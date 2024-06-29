@@ -153,7 +153,7 @@ async function update(req, res, next) {
 //DELETE
 async function destroy(req, res) {
   await service.destroy(res.locals.table.table_id);
-  res.sendStatus(204);
+  res.sendStatus(200);
 }
 
 module.exports = {
