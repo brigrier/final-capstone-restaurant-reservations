@@ -2,7 +2,9 @@ const knex = require("../db/connection");
 
 // GET
 function list() {
-  return knex("tables").select("*").orderBy("table_name");
+  return knex("tables")
+  .select("*")
+  .orderBy("table_name");
 }
 
 // POST
