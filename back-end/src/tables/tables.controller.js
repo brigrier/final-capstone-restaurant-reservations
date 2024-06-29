@@ -56,12 +56,13 @@ function hasProperties(...properties) {
 
 // Middleware to check if the table exists
 async function tableExists(req, res, next) {
-  const table = await service.read(req.params.tableId);
+  const { tableId } = req.params;
+  const table = await service.read(tableId);
   if (table) {
     res.locals.table = table;
     return next();
   }
-  next({ status: 404, message: "Table cannot be found." });
+  next({ status: 404, message: `${tableId}` });
 }
 
 // Middleware to check if reservation data is provided and valid
@@ -88,15 +89,26 @@ async function reservationExists(req, res, next) {
 function tableHasCapacityAndIsAvailable(req, res, next) {
   const table = res.locals.table;
   const reservation = res.locals.reservation;
+  
 
   if (table.capacity < reservation.people) {
     return next({ status: 400, message: "Table does not have sufficient capacity." });
   }
 
-  if (table.reservation_id) {
+  if (table.status === "occupied") {
     return next({ status: 400, message: "Table is occupied." });
   }
 
+  next();
+}
+
+// Middleware to check if the table is occupied
+async function isOccupied(req, res, next) {
+  const table = res.locals.table;
+
+  if (table.status === "free") {
+    return next({ status: 400, message: `not occupied` });
+  }
   next();
 }
 
@@ -150,10 +162,14 @@ async function update(req, res, next) {
   }
 }
 
-//DELETE
-async function destroy(req, res) {
-  await service.destroy(res.locals.table.table_id);
-  res.sendStatus(204);
+// DELETE
+async function destroy(req, res, next) {
+  try {
+    await service.destroy(res.locals.table.table_id);
+    res.status(200);
+  } catch (error) {
+    next(error);
+  }
 }
 
 module.exports = {
@@ -167,5 +183,6 @@ module.exports = {
     tableHasCapacityAndIsAvailable,
     seatReservation,
   ],
-  delete: [tableExists, destroy],
+  delete: [tableExists, isOccupied, destroy],
 };
+
