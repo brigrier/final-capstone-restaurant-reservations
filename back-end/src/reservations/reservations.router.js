@@ -20,6 +20,9 @@ router.route("/:reservationId/status")
 router.route("/:mobileNumber")
   .get(controller.search)
   .all(methodNotAllowed)
+router.route("/:reservationId/edit")
+  .put(controller.update)  
+  .all(methodNotAllowed)
     
 
 module.exports = router;
