@@ -251,26 +251,4 @@ export async function finishTable(table_id, signal) {
   return await fetchJson(url, options);
 }
 
-export async function updateTableStatus(tableId, status, signal) {
-  const url = `${API_BASE_URL}/tables/${tableId}/status`;
-  const options = {
-    method: "PUT",
-    headers,
-    body: JSON.stringify({ data: { status } }),
-    signal,
-  };
-  return await fetchJson(url, options, {});
-}
-
-export async function finishTable(tableId, signal) {
-  const url = `${API_BASE_URL}/tables/${tableId}/finish`;
-  const options = {
-    method: "PUT",
-    headers,
-    signal,
-  };
-  return await fetchJson(url, options);
-}
-
-
 // Add other utility functions as needed
