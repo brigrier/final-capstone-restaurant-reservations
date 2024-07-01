@@ -38,7 +38,7 @@ function read(reservation_id) {
 function update(updatedReservations) {
     return knex("reservations")
     .select("*")
-    .where({ reservation_id: updatedReviews.reservation_id })
+    .where({ reservation_id: updatedReservations.reservation_id })
     .update(updatedReservations, "*");
 }
 
