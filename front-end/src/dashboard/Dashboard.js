@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import { listReservations, listTables, updateReservationStatus, finishTable as apiFinishTable } from "../utils/api"; // Assuming you have this function in your API utils
 import ErrorAlert from "../layout/ErrorAlert";
 import { today, next, previous } from "../utils/date-time";
+import { Link } from "react-router-dom"
+
 
 function Dashboard({ initialDate }) {
   const [date, setDate] = useState(initialDate || today());
@@ -9,6 +11,7 @@ function Dashboard({ initialDate }) {
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
+
 
   const formatDate = (date) => {
     const d = new Date(date);
@@ -122,7 +125,11 @@ function Dashboard({ initialDate }) {
       <td>{reservation.people}</td>
       <td>
         {reservation.status === "booked" && (
-          <button onClick={() => handleSeatReservation(reservation.reservation_id)}>Seat</button>
+          <Link to={`/reservations/${reservation.reservation_id}/seat`}>
+          <button type="button" className="btn btn-success ">
+            Seat
+          </button>
+        </Link>
         )}
       </td>
       <td data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
