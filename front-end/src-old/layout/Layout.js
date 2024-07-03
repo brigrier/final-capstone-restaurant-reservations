@@ -1,11 +1,13 @@
 import React from "react";
 import Menu from "./Menu";
-import AppRoutes from "./Routes";
+import Routes from "./Routes";
 
 import "./Layout.css";
 
 /**
  * Defines the main layout of the application.
+ *
+ * You will not need to make changes to this file.
  *
  * @returns {JSX.Element}
  */
@@ -17,7 +19,7 @@ function Layout() {
           <Menu />
         </div>
         <div className="col">
-          <AppRoutes />
+          <Routes />
         </div>
       </div>
     </div>
@@ -25,4 +27,3 @@ function Layout() {
 }
 
 export default Layout;
-
