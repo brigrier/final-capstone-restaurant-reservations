@@ -1,28 +1,37 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { listReservations, listTables, updateReservationStatus, finishTable as apiFinishTable } from "../utils/api"; // Assuming you have this function in your API utils
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  listReservations,
+  listTables,
+  updateReservationStatus,
+  finishTable as apiFinishTable,
+} from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { today, next, previous } from "../utils/date-time";
-import { Link } from "react-router-dom"
-
+import { Link } from "react-router-dom";
 
 function Dashboard({ initialDate }) {
-  const [date, setDate] = useState(initialDate || today());
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const dateFromParams = queryParams.get("date");
+
+  const [date, setDate] = useState(dateFromParams || initialDate || today());
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
 
-
   const formatDate = (date) => {
     const d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
+    let month = "" + (d.getMonth() + 1);
+    let day = "" + d.getDate();
     const year = d.getFullYear();
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
 
-    return [year, month, day].join('-');
+    return [year, month, day].join("-");
   };
 
   const loadDashboard = useCallback(() => {
@@ -64,18 +73,21 @@ function Dashboard({ initialDate }) {
     const newDate = previous(date);
     console.log("Previous day:", newDate);
     setDate(newDate);
+    navigate(`?date=${newDate}`);
   };
-  
+
   const handleNextDay = () => {
     const newDate = next(date);
     console.log("Next day:", newDate);
     setDate(newDate);
+    navigate(`?date=${newDate}`);
   };
-  
+
   const handleToday = () => {
     const newDate = today();
     console.log("Today:", newDate);
     setDate(newDate);
+    navigate(`?date=${newDate}`);
   };
 
   const finishTable = async (tableId) => {
@@ -116,7 +128,7 @@ function Dashboard({ initialDate }) {
         setReservationsError(error);
       }
     }
-  }
+  };
 
   const reservationsTableRows = reservations.map((reservation, index) => (
     <tr key={index}>
@@ -126,18 +138,30 @@ function Dashboard({ initialDate }) {
       <td>
         {reservation.status === "booked" && (
           <Link to={`/reservations/${reservation.reservation_id}/seat`}>
-          <button type="button" className="btn btn-success ">
-            Seat
-          </button>
-        </Link>
+            <button type="button" className="btn btn-success ">
+              Seat
+            </button>
+          </Link>
         )}
       </td>
-      <td data-reservation-id-status={reservation.reservation_id}>{reservation.status}</td>
-      <td>
-      <a href={`/reservations/${reservation.reservation_id}/edit`} className="btn btn-primary">Edit</a>
+      <td data-reservation-id-status={reservation.reservation_id}>
+        {reservation.status}
       </td>
       <td>
-        <button data-reservation-id-cancel={reservation.reservation_id} onClick={() => handleCancel(reservation.reservation_id)}>Cancel</button>
+        <a
+          href={`/reservations/${reservation.reservation_id}/edit`}
+          className="btn btn-primary"
+        >
+          Edit
+        </a>
+      </td>
+      <td>
+        <button
+          data-reservation-id-cancel={reservation.reservation_id}
+          onClick={() => handleCancel(reservation.reservation_id)}
+        >
+          Cancel
+        </button>
       </td>
     </tr>
   ));
@@ -216,4 +240,3 @@ function Dashboard({ initialDate }) {
 }
 
 export default Dashboard;
-

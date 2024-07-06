@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import moment from "moment";
+import dayjs from "dayjs";
 import { createReservation } from "../utils/api";
 
 const NewReservation = () => {
@@ -32,7 +32,7 @@ const NewReservation = () => {
 
       try {
         await createReservation(reservation);
-        navigate("/dashboard");
+        navigate(`/dashboard?date=${reservationDate}`);
       } catch (err) {
         setError(err.message);
       }
@@ -40,11 +40,11 @@ const NewReservation = () => {
   };
 
   const validateForm = () => {
-    const reservationDateTime = moment(
+    const reservationDateTime = dayjs(
       `${reservationDate} ${reservationTime}`,
       "YYYY-MM-DD HH:mm"
     );
-    const now = moment();
+    const now = dayjs();
 
     if (reservationDateTime.day() === 2) {
       return "The restaurant is closed on Tuesdays. Please choose another date.";
@@ -52,8 +52,8 @@ const NewReservation = () => {
     if (reservationDateTime.isBefore(now)) {
       return "Reservations cannot be made in the past. Please choose a future date and time.";
     }
-    const openingTime = moment(`${reservationDate} 10:30`, "YYYY-MM-DD HH:mm");
-    const closingTime = moment(`${reservationDate} 21:30`, "YYYY-MM-DD HH:mm");
+    const openingTime = dayjs(`${reservationDate} 10:30`, "YYYY-MM-DD HH:mm");
+    const closingTime = dayjs(`${reservationDate} 21:30`, "YYYY-MM-DD HH:mm");
 
     if (reservationDateTime.isBefore(openingTime)) {
       return "Reservations cannot be made before 10:30 AM. Please choose a later time.";
