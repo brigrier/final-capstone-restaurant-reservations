@@ -136,14 +136,16 @@ function Dashboard({ initialDate }) {
       <td>{`${reservation.first_name} ${reservation.last_name}`}</td>
       <td>{reservation.people}</td>
       <td>
-        {reservation.status === "booked" && (
-          <Link to={`/reservations/${reservation.reservation_id}/seat`}>
-            <button type="button" className="btn btn-success ">
-              Seat
-            </button>
-          </Link>
-        )}
-      </td>
+      {reservation.status === "booked" && (
+        <button
+          type="button"
+          className="btn btn-success"
+          onClick={() => handleSeatReservation(reservation.reservation_id)}
+        >
+          Seat
+        </button>
+      )}
+    </td>
       <td data-reservation-id-status={reservation.reservation_id}>
         {reservation.status}
       </td>

@@ -4,12 +4,23 @@ import { createTable } from "../utils/api";
 
 const NewTable = () => {
   const [tableName, setTableName] = useState("");
-  const [capacity, setCapacity] = useState(1);
+  const [capacity, setCapacity] = useState("");
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!tableName || !capacity) {
+      setError(new Error("Both table name and capacity are required."));
+      return;
+    }
+
+    if (capacity <= 0) {
+      setError(new Error("Capacity must be at least 1."));
+      return;
+    }
+
     const table = { table_name: tableName, capacity: Number(capacity) };
 
     try {
@@ -65,3 +76,4 @@ const NewTable = () => {
 };
 
 export default NewTable;
+
