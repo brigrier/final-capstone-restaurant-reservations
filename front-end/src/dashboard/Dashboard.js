@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import {
   listReservations,
   listTables,
@@ -107,7 +107,11 @@ function Dashboard({ initialDate }) {
   const handleSeatReservation = async (reservationId) => {
     try {
       const abortController = new AbortController();
-      await updateReservationStatus(reservationId, "seated", abortController.signal);
+      await updateReservationStatus(
+        reservationId,
+        "seated",
+        abortController.signal
+      );
       loadDashboard();
     } catch (error) {
       setReservationsError(error);
@@ -121,7 +125,11 @@ function Dashboard({ initialDate }) {
     if (confirmed) {
       try {
         const abortController = new AbortController();
-        await updateReservationStatus(reservationId, "cancelled", abortController.signal);
+        await updateReservationStatus(
+          reservationId,
+          "cancelled",
+          abortController.signal
+        );
         loadDashboard();
       } catch (error) {
         setReservationsError(error);
@@ -135,15 +143,11 @@ function Dashboard({ initialDate }) {
       <td>{`${reservation.first_name} ${reservation.last_name}`}</td>
       <td>{reservation.people}</td>
       <td>
-        {reservation.status === "booked" && (
-          <button
-            type="button"
-            className="btn btn-success"
-            onClick={() => handleSeatReservation(reservation.reservation_id)}
-          >
+        <Link to={`/reservations/${reservation.reservation_id}/seat`}>
+          <button className="btn" type="button">
             Seat
           </button>
-        )}
+        </Link>
       </td>
       <td data-reservation-id-status={reservation.reservation_id}>
         {reservation.status}
@@ -213,7 +217,9 @@ function Dashboard({ initialDate }) {
               <th scope="col">Name</th>
               <th scope="col">People In Party</th>
               <th scope="col">Ready to Seat</th>
-              <th scope="col" colSpan="3">Status</th>
+              <th scope="col" colSpan="3">
+                Status
+              </th>
             </tr>
           </thead>
           <tbody>{reservationsTableRows}</tbody>

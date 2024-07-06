@@ -108,6 +108,10 @@ function reservationIsNotSeated(req, res, next) {
   if (reservation.status === "seated") {
     return next({ status: 400, message: "Reservation is already seated." });
   }
+ 
+  if (res.locals.table.reservation_id) {
+    return next({status: 400, message: "Table is occupied. Pick another table"})
+  }
 
   next();
 }
@@ -117,21 +121,10 @@ async function seatReservation(req, res, next) {
   const { table } = res.locals;
   const { reservation_id } = req.body.data;
 
-  const updatedTable = {
-    ...table,
-    reservation_id,
-    status: "occupied",
-  };
-
-  const updatedReservation = {
-    ...res.locals.reservation,
-    status: "seated",
-  };
 
   try {
-    await service.update(updatedTable);
-    await reservationsService.update(updatedReservation);
-    res.status(200).json({ data: updatedTable });
+    let data = await service.unseat(table.table_id, reservation_id);
+    res.status(200).json({ data });
   } catch (error) {
     next(error);
   }
@@ -160,7 +153,7 @@ async function unseatReservation(req, res, next) {
 
 
   try {
-    await service.unseat(table.table_id, table.reservation_id);
+    await service.destroy(table.table_id, table.reservation_id);
     res.status(200).json({});
   } catch (error) {
     next(error);

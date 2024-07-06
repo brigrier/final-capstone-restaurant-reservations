@@ -27,11 +27,7 @@ function update(updatedTable) {
 }
 
 //DELETE
-function destroy(table_id) {
-  return knex("tables").where({ table_id }).del();
-}
-
-function unseat(table_id, reservation_id) {
+function destroy(table_id, reservation_id) {
   return knex("reservations")
     .where({ reservation_id })
     .update({ status: "finished" })
@@ -40,6 +36,19 @@ function unseat(table_id, reservation_id) {
       return knex("tables")
         .where({ table_id })
         .update({ reservation_id: null })
+        .returning("*");
+    });
+}
+
+function unseat(table_id, reservation_id) {
+  return knex("reservations")
+    .where({ reservation_id })
+    .update({ status: "seated" })
+    .returning("*")
+    .then(() => {
+      return knex("tables")
+        .where({ table_id })
+        .update({ reservation_id })
         .returning("*");
     });
 }
