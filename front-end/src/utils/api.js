@@ -241,14 +241,14 @@ export async function readReservation(reservation_id, signal) {
  * @returns {Promise<void>}
  *  a promise that resolves when the table is successfully finished.
  */
-export async function finishTable(table_id, signal) {
-  const url = `${API_BASE_URL}/tables/${table_id}/seat`;
+export async function finishTable(tableId, signal) {
+  const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
   const options = {
     method: "DELETE",
-    headers,
+    headers: { "Content-Type": "application/json" },
     signal,
   };
-  return await fetchJson(url, options);
+  return await fetchJson(url, options, {});
 }
 
 // Add other utility functions as needed

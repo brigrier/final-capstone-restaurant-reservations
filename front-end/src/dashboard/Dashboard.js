@@ -8,7 +8,6 @@ import {
 } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { today, next, previous } from "../utils/date-time";
-import { Link } from "react-router-dom";
 
 function Dashboard({ initialDate }) {
   const location = useLocation();
@@ -136,16 +135,16 @@ function Dashboard({ initialDate }) {
       <td>{`${reservation.first_name} ${reservation.last_name}`}</td>
       <td>{reservation.people}</td>
       <td>
-      {reservation.status === "booked" && (
-        <button
-          type="button"
-          className="btn btn-success"
-          onClick={() => handleSeatReservation(reservation.reservation_id)}
-        >
-          Seat
-        </button>
-      )}
-    </td>
+        {reservation.status === "booked" && (
+          <button
+            type="button"
+            className="btn btn-success"
+            onClick={() => handleSeatReservation(reservation.reservation_id)}
+          >
+            Seat
+          </button>
+        )}
+      </td>
       <td data-reservation-id-status={reservation.reservation_id}>
         {reservation.status}
       </td>

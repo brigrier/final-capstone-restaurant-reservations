@@ -61,7 +61,7 @@ const Search = () => {
           onChange={(e) => setMobileNumber(e.target.value)}
         />
         <button
-          type="button"
+          type="submit"
           className="btn btn-outline-primary"
           onClick={handleFindReservations}
           data-mdb-ripple-init
