@@ -201,12 +201,14 @@ function Dashboard({ initialDate }) {
   return (
     <main>
       <h1>Dashboard</h1>
-      <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for {formatDate(date)}</h4>
+      <div className=" mb-3">
+        <h4 style={{ textAlign: "center", fontSize: "25px" }} className="mb-0">
+          Reservations for {formatDate(date)}
+        </h4>
       </div>
-      <div>
+      <div className="day-buttons">
         <button onClick={handlePreviousDay}>Previous Day</button>
-        <button onClick={handleToday}>Today</button>
+        <button style={{marginLeft: "10px", marginRight: "10px"}} onClick={handleToday}>Today</button>
         <button onClick={handleNextDay}>Next Day</button>
       </div>
       <ErrorAlert error={reservationsError} />
@@ -214,13 +216,13 @@ function Dashboard({ initialDate }) {
 
       <div>
         <h4>Reservations</h4>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr>
               <th scope="col">#</th>
               <th scope="col">Name</th>
               <th scope="col">People In Party</th>
-              <th scope="col">Ready to Seat</th>
+              <th scope="col">Ready to Seat?</th>
               <th scope="col" colSpan="3">
                 Status
               </th>
@@ -232,9 +234,12 @@ function Dashboard({ initialDate }) {
           <p>No reservations found for the given date.</p>
         )}
       </div>
-      <div>
+
+      <br></br>
+
+      <div style={{marginBottom: "95px"}}> 
         <h4>Tables</h4>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -246,6 +251,7 @@ function Dashboard({ initialDate }) {
           <tbody>{tablesRows}</tbody>
         </table>
       </div>
+      
     </main>
   );
 }
