@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   listReservations,
   listTables,
@@ -50,6 +50,9 @@ function Dashboard({ initialDate }) {
   }, [date]);
 
   useEffect(() => {
+    if (dateFromParams !== date) {
+      navigate(`?date=${date}`);
+    }
     loadDashboard();
   }, [date, loadDashboard]);
 
@@ -72,21 +75,18 @@ function Dashboard({ initialDate }) {
     const newDate = previous(date);
     console.log("Previous day:", newDate);
     setDate(newDate);
-    navigate(`?date=${newDate}`);
   };
 
   const handleNextDay = () => {
     const newDate = next(date);
     console.log("Next day:", newDate);
     setDate(newDate);
-    navigate(`?date=${newDate}`);
   };
 
   const handleToday = () => {
     const newDate = today();
     console.log("Today:", newDate);
     setDate(newDate);
-    navigate(`?date=${newDate}`);
   };
 
   const finishTable = async (tableId) => {
@@ -103,21 +103,6 @@ function Dashboard({ initialDate }) {
       }
     }
   };
-/*
-  const handleSeatReservation = async (reservationId) => {
-    try {
-      const abortController = new AbortController();
-      await updateReservationStatus(
-        reservationId,
-        "seated",
-        abortController.signal
-      );
-      loadDashboard();
-    } catch (error) {
-      setReservationsError(error);
-    }
-  };
-  */
 
   const handleCancel = async (reservationId) => {
     const confirmed = window.confirm(
@@ -209,7 +194,7 @@ function Dashboard({ initialDate }) {
       </div>
       <div className="day-buttons">
         <button onClick={handlePreviousDay}>Previous Day</button>
-        <button style={{marginLeft: "10px", marginRight: "10px"}} onClick={handleToday}>Today</button>
+        <button style={{ marginLeft: "10px", marginRight: "10px" }} onClick={handleToday}>Today</button>
         <button onClick={handleNextDay}>Next Day</button>
       </div>
       <ErrorAlert error={reservationsError} />
@@ -238,7 +223,7 @@ function Dashboard({ initialDate }) {
 
       <br></br>
 
-      <div style={{marginBottom: "95px"}}> 
+      <div style={{ marginBottom: "142px" }}>
         <h4>Tables</h4>
         <table className="table table-bordered">
           <thead>
@@ -252,7 +237,6 @@ function Dashboard({ initialDate }) {
           <tbody>{tablesRows}</tbody>
         </table>
       </div>
-      
     </main>
   );
 }

@@ -48,7 +48,10 @@ const Search = () => {
   ));
 
   return (
-    <div>
+    <div className="center-search">
+      <div>
+        <h2>Search for a reservation: </h2>
+      </div>
       <div className="input-group">
         <input
           type="search"
@@ -74,7 +77,7 @@ const Search = () => {
       <br />
 
       <div>
-        <table className="table">
+        <table className="table table-bordered">
           <thead>
             <tr>
               <th scope="col">#</th>
