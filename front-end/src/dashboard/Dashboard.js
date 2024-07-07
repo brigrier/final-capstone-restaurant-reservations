@@ -8,6 +8,7 @@ import {
 } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 import { today, next, previous } from "../utils/date-time";
+import dayjs from "dayjs";
 
 function Dashboard({ initialDate }) {
   const location = useLocation();
@@ -21,17 +22,8 @@ function Dashboard({ initialDate }) {
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
 
-  const formatDate = (date) => {
-    const d = new Date(date);
-    let month = "" + (d.getMonth() + 1);
-    let day = "" + d.getDate();
-    const year = d.getFullYear();
-
-    if (month.length < 2) month = "0" + month;
-    if (day.length < 2) day = "0" + day;
-
-    return [year, month, day].join("-");
-  };
+  const formatDate = (date) => dayjs(date).format('YYYY-MM-DD')
+  
 
   const loadDashboard = useCallback(() => {
     console.log("Loading dashboard for date:", date);
