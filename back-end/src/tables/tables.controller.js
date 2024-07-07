@@ -1,5 +1,6 @@
 const service = require("./tables.service");
 const reservationsService = require("../reservations/reservations.service");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
 
 // VALIDATION
 const validProperties = ["table_name", "capacity"];
@@ -206,18 +207,18 @@ async function destroy(req, res, next) {
 }
 
 module.exports = {
-  list,
-  create: [hasProperties("table_name", "capacity"), hasValidProps, create],
-  update: [tableExists, hasProperties("reservation_id"), update],
+  list: asyncErrorBoundary(list),
+  create: [asyncErrorBoundary(hasProperties("table_name", "capacity")), asyncErrorBoundary(hasValidProps), asyncErrorBoundary(create)],
+  update: [asyncErrorBoundary(tableExists),asyncErrorBoundary(hasProperties("reservation_id")), asyncErrorBoundary(update)],
   seatReservation: [
-    tableExists,
-    reservationDataProvided,
-    reservationExists,
-    reservationIsNotSeated,
-    tableHasCapacityAndIsAvailable,
-    seatReservation,
+    asyncErrorBoundary(tableExists),
+    asyncErrorBoundary(reservationDataProvided),
+    asyncErrorBoundary(reservationExists),
+    asyncErrorBoundary(reservationIsNotSeated),
+    asyncErrorBoundary(tableHasCapacityAndIsAvailable),
+    asyncErrorBoundary(seatReservation),
   ],
-  unseatReservation: [tableExists, tableIsOccupied, unseatReservation],
-  delete: [tableExists, destroy],
+  unseatReservation: [asyncErrorBoundary(tableExists),asyncErrorBoundary(tableIsOccupied), asyncErrorBoundary(unseatReservation)],
+  delete: [asyncErrorBoundary(tableExists), asyncErrorBoundary(destroy)],
 };
 

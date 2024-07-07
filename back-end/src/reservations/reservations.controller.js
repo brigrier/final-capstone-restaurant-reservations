@@ -1,5 +1,6 @@
 const moment = require("moment");
 const service = require("./reservations.service");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
 
 // VALIDATION
 const validProperties = [
@@ -247,38 +248,38 @@ async function update(req, res, next) {
 }
 
 module.exports = {
-  list,
-  search,
+  list: asyncErrorBoundary(list),
+  search: asyncErrorBoundary(search),
   create: [
-    hasValidProps,
-    hasProperties(
+    asyncErrorBoundary(hasValidProps),
+    asyncErrorBoundary(hasProperties(
       "first_name",
       "last_name",
       "mobile_number",
       "reservation_date",
       "reservation_time",
       "people"
-    ),
-    isValidResStatus,
-    create,
+    )),
+    asyncErrorBoundary(isValidResStatus),
+    asyncErrorBoundary(create),
   ],
-  read: [reservationExists, read],
+  read: [asyncErrorBoundary(reservationExists), asyncErrorBoundary(read)],
   update: [
-    reservationExists,
-    hasProperties(
+    asyncErrorBoundary(reservationExists),
+    asyncErrorBoundary(hasProperties(
       "first_name",
       "last_name",
       "mobile_number",
       "reservation_date",
       "reservation_time",
       "people"
-    ),
-    isReservationFinished,
-    update
+    )),
+    asyncErrorBoundary(isReservationFinished),
+    asyncErrorBoundary(update)
   ],
   updateStatus: [
-    reservationExists,
-    isReservationFinished,
-    updateStatus
+    asyncErrorBoundary(reservationExists),
+    asyncErrorBoundary(isReservationFinished),
+    asyncErrorBoundary(updateStatus)
   ],
 };
