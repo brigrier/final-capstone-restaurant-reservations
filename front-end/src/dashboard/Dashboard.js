@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate} from "react-router-dom";
 import {
   listReservations,
   listTables,
@@ -103,7 +103,7 @@ function Dashboard({ initialDate }) {
       }
     }
   };
-
+/*
   const handleSeatReservation = async (reservationId) => {
     try {
       const abortController = new AbortController();
@@ -117,6 +117,7 @@ function Dashboard({ initialDate }) {
       setReservationsError(error);
     }
   };
+  */
 
   const handleCancel = async (reservationId) => {
     const confirmed = window.confirm(

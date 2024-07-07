@@ -7,8 +7,8 @@ import moment from "moment";
 const Edit = () => {
   const { formData, updateFormData } = useFormData();
   const [error, setError] = useState(null);
-  const [reservationDate, setReservationDate] = useState("");
-  const [reservationTime, setReservationTime] = useState("");
+  const [reservationDate, ] = useState("");
+  const [reservationTime, ] = useState("");
   const { reservationId } = useParams();
   const navigate = useNavigate();
 
