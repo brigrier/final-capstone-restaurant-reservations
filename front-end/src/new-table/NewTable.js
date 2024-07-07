@@ -36,8 +36,8 @@ const NewTable = () => {
   };
 
   return (
-    <div>
-      <h2>New Table</h2>
+    <div style={{marginBottom: "538px"}}>
+      <h2>Enter a new Table: </h2>
       {error && <div className="alert alert-danger">{error.message}</div>}
       <form onSubmit={handleSubmit}>
         <div>
@@ -66,10 +66,12 @@ const NewTable = () => {
             className="form-control"
           />
         </div>
-        <button type="submit">Submit</button>
+        <div style={{marginTop: "15px"}}>
+        <button style={{marginRight: "10px"}} type="submit">Submit</button>
         <button type="button" onClick={handleCancel}>
           Cancel
         </button>
+        </div>
       </form>
     </div>
   );
