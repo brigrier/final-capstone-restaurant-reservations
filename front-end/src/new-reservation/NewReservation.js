@@ -76,12 +76,12 @@ const NewReservation = () => {
   };
 
   return (
-    <div>
-      <h2>Enter new reservation</h2>
+    <div style={{marginBottom: "215px"}}>
+      <h2>Enter a new reservation: </h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="first_name">First name</label>
+        <div className="form-in">
+          <label htmlFor="first_name" >First name</label>
           <input
             type="text"
             id="first_name"
@@ -92,7 +92,7 @@ const NewReservation = () => {
             className="form-control"
           />
         </div>
-        <div>
+        <div className="form-in">
           <label htmlFor="last_name">Last name</label>
           <input
             type="text"
@@ -104,7 +104,7 @@ const NewReservation = () => {
             className="form-control"
           />
         </div>
-        <div>
+        <div className="form-in">
           <label htmlFor="mobile_number">Mobile Number</label>
           <input
             type="text"
@@ -117,7 +117,7 @@ const NewReservation = () => {
             className="form-control"
           />
         </div>
-        <div>
+        <div className="form-in">
           <label htmlFor="reservation_date">Date of reservation</label>
           <input
             type="date"
@@ -131,7 +131,7 @@ const NewReservation = () => {
             className="form-control"
           />
         </div>
-        <div>
+        <div className="form-in">
           <label htmlFor="reservation_time">Time of reservation</label>
           <input
             type="time"
@@ -145,7 +145,7 @@ const NewReservation = () => {
             className="form-control"
           />
         </div>
-        <div>
+        <div className="form-in">
           <label htmlFor="people">Number of people in party</label>
           <input
             type="number"
@@ -158,10 +158,12 @@ const NewReservation = () => {
             min="1"
           />
         </div>
-        <button type="submit">Submit</button>
+        <div style={{marginTop: "15px"}}>
+        <button style={{marginRight: "10px"}} type="submit">Submit</button>
         <button type="button" onClick={handleCancel}>
           Cancel
         </button>
+        </div>
       </form>
     </div>
   );
