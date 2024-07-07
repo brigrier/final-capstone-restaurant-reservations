@@ -122,14 +122,14 @@ async function seatReservation(req, res, next) {
   const { table } = res.locals;
   const { reservation_id } = req.body.data;
 
-
   try {
-    let data = await service.unseat(table.table_id, reservation_id);
+    let data = await service.seat(table.table_id, reservation_id);
     res.status(200).json({ data });
   } catch (error) {
     next(error);
   }
 }
+
 
 
 

@@ -40,18 +40,20 @@ function destroy(table_id, reservation_id) {
     });
 }
 
-function unseat(table_id, reservation_id) {
-  return knex("reservations")
-    .where({ reservation_id })
-    .update({ status: "seated" })
-    .returning("*")
-    .then(() => {
-      return knex("tables")
-        .where({ table_id })
-        .update({ reservation_id })
-        .returning("*");
-    });
+function seat(table_id, reservation_id) {
+  return knex.transaction(async (trx) => {
+    await trx("reservations")
+      .where({ reservation_id })
+      .update({ status: "seated" })
+      .returning("*");
+
+    return trx("tables")
+      .where({ table_id })
+      .update({ reservation_id })
+      .returning("*");
+  });
 }
+
 
 module.exports = {
   list,
@@ -59,5 +61,5 @@ module.exports = {
   read,
   update,
   destroy,
-  unseat,
+  seat,
 };
