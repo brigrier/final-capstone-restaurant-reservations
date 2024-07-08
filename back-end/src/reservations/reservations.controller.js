@@ -94,7 +94,7 @@ function validateReservationTime(reservationDate, reservationTime) {
     Opening Time: ${openingTime.format()}
     Closing Time: ${closingTime.format()}`);
 
-  if (!moment(reservationTime, "HH:mm", true).isValid()) {
+  if (!moment(reservationTime.substring(0, 5), "HH:mm", true).isValid()) {
     const error = new Error(`'reservation_time' must be a valid time.`);
     error.status = 400;
     throw error;
