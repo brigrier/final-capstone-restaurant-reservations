@@ -132,11 +132,12 @@ export async function updateReservationStatus(reservationId, status, signal) {
  *  a promise that resolves to the updated reservation object.
  */
 export async function updateReservation(updatedReservation, signal) {
+  console.log(updatedReservation)
   const url = `${API_BASE_URL}/reservations/${updatedReservation.reservation_id}`;
   const options = {
     method: "PUT",
     headers,
-    body: JSON.stringify({ data: { updatedReservation } }),
+    body: JSON.stringify({ data: { ...updatedReservation } }),
     signal,
   };
   return await fetchJson(url, options, updatedReservation);

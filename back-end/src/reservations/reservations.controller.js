@@ -91,6 +91,7 @@ function hasProperties(...properties) {
 
     try {
       properties.forEach((property) => {
+        
         if (!data[property]) {
           const error = new Error(`A '${property}' property is required.`);
           error.status = 400;
@@ -108,21 +109,29 @@ function hasProperties(...properties) {
           }
         }
 
-        if (property === "reservation_time") {
-          const reservationTime = moment(data[property], "HH:mm", true);
-          if (
-            !isValidTime(data[property]) ||
-            reservationDateTime.isBefore(now) ||
-            reservationDateTime.isBefore(openingTime) ||
-            reservationDateTime.isAfter(closingTime)
-          ) {
-            const error = new Error(
-              `'reservation_time' must be a valid time, not in the past, or future, and within business hours (10:30 AM to 9:30 PM).`
-            );
-            error.status = 400;
-            throw error;
-          }
-        }
+        // if (property === "reservation_time") {
+        //   const reservationTime = moment(data[property], "HH:mm", true);
+        //   console.log(reservationDateTime)
+        //   console.log(now)
+        //   console.log(openingTime)
+        //   console.log(closingTime)
+        //   console.log(reservationDateTime.isBefore(now))
+        //   console.log(reservationDateTime.isBefore(openingTime))
+        //   console.log(reservationDateTime.isBefore(closingTime))
+        //   console.log(!isValidTime(data[property]))
+        //   if (
+        //     !isValidTime(data[property]) ||
+        //     reservationDateTime.isBefore(now) ||
+        //     reservationDateTime.isBefore(openingTime) ||
+        //     reservationDateTime.isAfter(closingTime)
+        //   ) {
+        //     const error = new Error(
+        //       `'reservation_time' must be a valid time, not in the past, or future, and within business hours (10:30 AM to 9:30 PM).`
+        //     );
+        //     error.status = 400;
+        //     throw error;
+        //   }
+        // }
 
         if (property === "people" && !isValidNumber(data[property])) {
           const error = new Error(`'people' must be a valid number.`);

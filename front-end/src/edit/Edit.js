@@ -9,19 +9,19 @@ const Edit = () => {
   const [error, setError] = useState(null);
   const [reservationDate, ] = useState("");
   const [reservationTime, ] = useState("");
-  const { reservationId } = useParams();
+  const { reservation_id } = useParams();
   const navigate = useNavigate();
-
+console.log(reservation_id)
   useEffect(() => {
     const fetchReservation = async () => {
       try {
-        const reservation = await readReservation(reservationId); // Corrected function name
+        const reservation = await readReservation(reservation_id); // Corrected function name
         updateFormData({
-          firstName: reservation.first_name,
-          lastName: reservation.last_name,
-          mobileNumber: reservation.mobile_number,
-          reservationDate: reservation.reservation_date,
-          reservationTime: reservation.reservation_time,
+          first_name: reservation.first_name,
+          last_name: reservation.last_name,
+          mobile_number: reservation.mobile_number,
+          reservation_date: reservation.reservation_date,
+          reservation_time: reservation.reservation_time,
           people: reservation.people,
         });
       } catch (error) {
@@ -31,7 +31,7 @@ const Edit = () => {
     };
 
     fetchReservation();
-  }, [reservationId, updateFormData]);
+  }, []);
 
   const validateForm = () => {
     const reservationDateTime = moment(
@@ -59,6 +59,7 @@ const Edit = () => {
   };
 
   const handleSubmit = async (e) => {
+    const abortController = new AbortController()
     e.preventDefault();
     const newError = validateForm();
     if (newError) {
@@ -66,7 +67,9 @@ const Edit = () => {
     } else {
       setError(null);
       try {
-        await updateReservation(reservationId, formData);
+
+        console.log(reservation_id)
+        await updateReservation({...formData, reservation_id}, abortController.signal);
         navigate(-1);
       } catch (err) {
         setError(err.message);
@@ -77,7 +80,6 @@ const Edit = () => {
   const handleCancel = () => {
     navigate(-1);
   };
-
   return (
     <div style={{marginBottom: "250px"}}>
       <h2>Edit Reservation</h2>
@@ -89,9 +91,9 @@ const Edit = () => {
             type="text"
             id="first_name"
             name="first_name"
-            value={formData.firstName}
+            value={formData.first_name}
             onChange={(e) =>
-              updateFormData({ ...formData, firstName: e.target.value })
+              updateFormData({ ...formData, first_name: e.target.value })
             }
             required
             className="form-control"
@@ -103,9 +105,9 @@ const Edit = () => {
             type="text"
             id="last_name"
             name="last_name"
-            value={formData.lastName}
+            value={formData.last_name}
             onChange={(e) =>
-                updateFormData({ ...formData, lastName: e.target.value })
+                updateFormData({ ...formData, last_name: e.target.value })
               }
             required
             className="form-control"
@@ -117,9 +119,9 @@ const Edit = () => {
             type="text"
             id="mobile_number"
             name="mobile_number"
-            value={formData.mobileNumber}
+            value={formData.mobile_number}
             onChange={(e) =>
-                updateFormData({ ...formData, mobileNumber: e.target.value })
+                updateFormData({ ...formData, mobile_number: e.target.value })
               }
             placeholder="XXX-XXX-XXXX"
             required
@@ -132,13 +134,14 @@ const Edit = () => {
             type="date"
             id="reservation_date"
             name="reservation_date"
-            value={formData.reservationDate}
+            value={formData.reservation_date}
+           // defaultValue={formData.reservationDate}
             onChange={(e) =>
-                updateFormData({ ...formData, reservationDate: e.target.value })
+                updateFormData({ ...formData, reservation_date: e.target.value })
               }
             required
-            placeholder="YYYY-MM-DD"
-            pattern="\d{4}-\d{2}-\d{2}"
+           // placeholder="YYYY-MM-DD"
+           // pattern="\d{4}-\d{2}-\d{2}"
             className="form-control"
           />
         </div>
@@ -148,9 +151,9 @@ const Edit = () => {
             type="time"
             id="reservation_time"
             name="reservation_time"
-            value={formData.reservationTime}
+            value={formData.reservation_time}
             onChange={(e) =>
-                updateFormData({ ...formData, reservationTime: e.target.value })
+                updateFormData({ ...formData, reservation_time: e.target.value })
               }
             required
             placeholder="HH:MM"
