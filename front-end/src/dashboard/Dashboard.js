@@ -90,6 +90,7 @@ function Dashboard({ initialDate }) {
         const abortController = new AbortController();
         await apiFinishTable(tableId, abortController.signal);
         loadTables();
+        loadReservations();
       } catch (error) {
         console.error("Error finishing table:", error);
         setTablesError(error);
