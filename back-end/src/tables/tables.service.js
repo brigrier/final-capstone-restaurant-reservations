@@ -35,7 +35,7 @@ function destroy(table_id, reservation_id) {
     .then(() => {
       return knex("tables")
         .where({ table_id })
-        .update({ reservation_id: null })
+        .update({ reservation_id: null, status: "free" })
         .returning("*");
     });
 }
@@ -49,7 +49,7 @@ function seat(table_id, reservation_id) {
 
     return trx("tables")
       .where({ table_id })
-      .update({ reservation_id })
+      .update({ reservation_id, status: "occupied" })
       .returning("*");
   });
 }

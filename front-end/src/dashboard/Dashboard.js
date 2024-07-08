@@ -22,11 +22,10 @@ function Dashboard({ initialDate }) {
   const [tables, setTables] = useState([]);
   const [tablesError, setTablesError] = useState(null);
 
-  const formatDate = (date) => dayjs(date).format('YYYY-MM-DD')
-  
+  const formatDate = (date) => dayjs(date).format('YYYY-MM-DD');
 
-  const loadDashboard = useCallback(() => {
-    console.log("Loading dashboard for date:", date);
+  const loadReservations = useCallback(() => {
+    console.log("Loading reservations for date:", date);
     const abortController = new AbortController();
     setReservationsError(null);
     listReservations({ date: formatDate(date) }, abortController.signal)
@@ -41,14 +40,7 @@ function Dashboard({ initialDate }) {
     return () => abortController.abort();
   }, [date]);
 
-  useEffect(() => {
-    if (dateFromParams !== date) {
-      navigate(`?date=${date}`);
-    }
-    loadDashboard();
-  }, [date, loadDashboard]);
-
-  useEffect(() => {
+  const loadTables = useCallback(() => {
     const abortController = new AbortController();
     setTablesError(null);
     listTables({}, abortController.signal)
@@ -62,6 +54,14 @@ function Dashboard({ initialDate }) {
       });
     return () => abortController.abort();
   }, []);
+
+  useEffect(() => {
+    if (dateFromParams !== date) {
+      navigate(`?date=${date}`);
+    }
+    loadReservations();
+    loadTables();
+  }, [date, loadReservations, loadTables]);
 
   const handlePreviousDay = () => {
     const newDate = previous(date);
@@ -89,8 +89,9 @@ function Dashboard({ initialDate }) {
       try {
         const abortController = new AbortController();
         await apiFinishTable(tableId, abortController.signal);
-        loadDashboard();
+        loadTables();
       } catch (error) {
+        console.error("Error finishing table:", error);
         setTablesError(error);
       }
     }
@@ -108,7 +109,7 @@ function Dashboard({ initialDate }) {
           "cancelled",
           abortController.signal
         );
-        loadDashboard();
+        loadReservations();
       } catch (error) {
         setReservationsError(error);
       }
@@ -124,7 +125,7 @@ function Dashboard({ initialDate }) {
         {reservation.status === "booked" && (
           <a
             href={`/reservations/${reservation.reservation_id}/seat`}
-            className="btn"
+            className="btn btn-primary"
           >
             Seat
           </a>
@@ -159,20 +160,20 @@ function Dashboard({ initialDate }) {
       <td>{table.table_name}</td>
       <td>{table.capacity}</td>
       <td data-table-id-status={table.table_id}>
-        {table.reservation_id ? (
-          <>
-            Occupied
-            <button
-              onClick={() => finishTable(table.table_id)}
-              data-table-id-finish={table.table_id}
-            >
-              Finish
-            </button>
-          </>
-        ) : (
-          "Free"
-        )}
+        {table.reservation_id ? "Occupied" : "Free"}
       </td>
+      {table.reservation_id && (
+        <td className="text-center">
+          <button
+            className="btn btn-sm btn-primary"
+            data-table-id-finish={table.table_id}
+            onClick={() => finishTable(table.table_id)}
+            type="button"
+          >
+            Finish
+          </button>
+        </td>
+      )}
     </tr>
   ));
 
@@ -224,6 +225,7 @@ function Dashboard({ initialDate }) {
               <th scope="col">Table Name</th>
               <th scope="col">Capacity</th>
               <th scope="col">Availability</th>
+              <th scope="col">Finish Table?</th>
             </tr>
           </thead>
           <tbody>{tablesRows}</tbody>
