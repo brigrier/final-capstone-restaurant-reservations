@@ -20,7 +20,9 @@ console.log(reservation_id)
           first_name: reservation.first_name,
           last_name: reservation.last_name,
           mobile_number: reservation.mobile_number,
-          reservation_date: reservation.reservation_date,
+          reservation_date: moment(reservation.reservation_date).format(
+            "YYYY-MM-DD"
+            ),
           reservation_time: reservation.reservation_time,
           people: reservation.people,
         });
