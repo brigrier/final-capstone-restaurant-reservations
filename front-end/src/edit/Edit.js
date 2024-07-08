@@ -72,7 +72,7 @@ console.log(reservation_id)
 
         console.log(reservation_id)
         await updateReservation({...formData, reservation_id}, abortController.signal);
-        navigate(-1);
+        navigate(`/dashboard?date=${formData.reservation_date}`);
       } catch (err) {
         setError(err.message);
       }
