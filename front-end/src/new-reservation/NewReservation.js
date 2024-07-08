@@ -159,8 +159,8 @@ const NewReservation = () => {
           />
         </div>
         <div style={{marginTop: "15px"}}>
-        <button style={{marginRight: "10px"}} type="submit">Submit</button>
-        <button type="button" onClick={handleCancel}>
+        <button className="btn btn-success" style={{marginRight: "10px"}} type="submit">Submit</button>
+        <button className="btn btn-dark" type="button" onClick={handleCancel}>
           Cancel
         </button>
         </div>

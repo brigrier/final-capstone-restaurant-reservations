@@ -190,12 +190,12 @@ async function list(req, res, next) {
   const { date, mobile_number } = req.query;
   try {
     let data;
-    if (date) {
-      data = await service.list(date);
-    } else if (mobile_number) {
+    if (mobile_number) {
       data = await service.search(mobile_number);
+    } else if (date) {
+      data = await service.list(date);
     } else {
-      return next({ status: 400, message: "Date query parameter or mobile_number query parameter is required" });
+      data = await service.list();
     }
     res.json({ data });
   } catch (error) {

@@ -79,7 +79,7 @@ const Edit = () => {
   };
 
   return (
-    <div>
+    <div style={{marginBottom: "250px"}}>
       <h2>Edit Reservation</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSubmit}>
@@ -173,10 +173,12 @@ const Edit = () => {
             min="1"
           />
         </div>
-        <button type="submit">Submit</button>
-        <button type="button" onClick={handleCancel}>
+        <div style={{marginTop: "15px"}}>
+        <button className="btn btn-success" style={{marginRight: "10px"}} type="submit">Submit</button>
+        <button className="btn btn-dark" type="button" onClick={handleCancel}>
           Cancel
         </button>
+        </div>
       </form>
     </div>
   );

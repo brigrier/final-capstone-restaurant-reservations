@@ -48,9 +48,9 @@ const Search = () => {
   ));
 
   return (
-    <div className="center-search">
-      <div>
-        <h2>Search for a reservation: </h2>
+    <div className="center-search" style={{marginBottom: "600px"}}>
+      <div >
+        <h2 style={{textAlign: "center"}}>Search for a reservation: </h2>
       </div>
       <div className="input-group">
         <input
@@ -66,6 +66,7 @@ const Search = () => {
         <button
           type="submit"
           className="btn btn-outline-primary"
+          style={{marginLeft: "10px"}}
           onClick={handleFindReservations}
           data-mdb-ripple-init
         >
@@ -89,7 +90,7 @@ const Search = () => {
           <tbody>{reservationsTableRows}</tbody>
         </table>
         {reservations.length === 0 && (
-          <p>No reservations found for the given phone number.</p>
+          <p style={{textAlign: "center"}}>No reservations found for the given phone number.</p>
         )}
       </div>
     </div>

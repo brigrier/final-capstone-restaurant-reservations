@@ -2,12 +2,19 @@ const knex = require("../db/connection");
 
 //GET 
 function list(reservation_date) {
-    return knex("reservations")
-        .select("*")
-        .where({ reservation_date })
-        .whereNot({ status: "finished" })
-        .orderBy("reservation_time");
+  const query = knex("reservations")
+      .select("*")
+      .whereNot({ status: "finished" })
+      .whereNot({ status: "cancelled" })
+      .orderBy("reservation_time");
+
+  if (reservation_date) {
+      query.where({ reservation_date });
+  }
+
+  return query;
 }
+
 
 //GET BY NUMBER
 function search(mobile_number) {

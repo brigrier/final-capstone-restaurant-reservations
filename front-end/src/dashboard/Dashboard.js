@@ -122,11 +122,11 @@ function Dashboard({ initialDate }) {
       <th scope="row">{index + 1}</th>
       <td>{`${reservation.first_name} ${reservation.last_name}`}</td>
       <td>{reservation.people}</td>
-      <td>
+      <td className="text-center">
         {reservation.status === "booked" && (
           <a
             href={`/reservations/${reservation.reservation_id}/seat`}
-            className="btn btn-primary"
+            className="btn btm-sm btn-secondary"
           >
             Seat
           </a>
@@ -136,16 +136,17 @@ function Dashboard({ initialDate }) {
       <td data-reservation-id-status={reservation.reservation_id}>
         {reservation.status}
       </td>
-      <td>
+      <td className="text-center">
         <a
           href={`/reservations/${reservation.reservation_id}/edit`}
-          className="btn btn-primary"
+          className="btn btn-sm btn-secondary"
         >
           Edit
         </a>
       </td>
-      <td>
+      <td className="text-center">
         <button
+          className="btn btn-sm btn-dark"
           data-reservation-id-cancel={reservation.reservation_id}
           onClick={() => handleCancel(reservation.reservation_id)}
         >
@@ -166,7 +167,7 @@ function Dashboard({ initialDate }) {
       {table.reservation_id && (
         <td className="text-center">
           <button
-            className="btn btn-sm btn-primary"
+            className="btn btn-sm btn-secondary"
             data-table-id-finish={table.table_id}
             onClick={() => finishTable(table.table_id)}
             type="button"
@@ -187,9 +188,9 @@ function Dashboard({ initialDate }) {
         </h4>
       </div>
       <div className="day-buttons">
-        <button onClick={handlePreviousDay}>Previous Day</button>
-        <button style={{ marginLeft: "10px", marginRight: "10px" }} onClick={handleToday}>Today</button>
-        <button onClick={handleNextDay}>Next Day</button>
+        <button className="btn btn-outline-primary" onClick={handlePreviousDay}>Previous Day</button>
+        <button className="btn btn-outline-primary" style={{ marginLeft: "10px", marginRight: "10px" }} onClick={handleToday}>Today</button>
+        <button className="btn btn-outline-primary" onClick={handleNextDay}>Next Day</button>
       </div>
       <ErrorAlert error={reservationsError} />
       <ErrorAlert error={tablesError} />
