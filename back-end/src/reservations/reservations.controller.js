@@ -72,26 +72,54 @@ async function isReservationFinished(req, res, next) {
   next();
 }
 
+
+function validateReservationDate(reservationDate) {
+  const date = moment(reservationDate, "YYYY-MM-DD", true);
+  if (!date.isValid() || date.day() === 2) {
+    const error = new Error(`'reservation_date' restaurant closed, must be a valid date and not a Tuesday.`);
+    error.status = 400;
+    throw error;
+  }
+}
+
+function validateReservationTime(reservationDate, reservationTime) {
+  const now = moment();
+  const reservationDateTime = moment(`${reservationDate} ${reservationTime}`, "YYYY-MM-DD HH:mm");
+  const openingTime = moment(`${reservationDate} 10:30`, "YYYY-MM-DD HH:mm");
+  const closingTime = moment(`${reservationDate} 21:30`, "YYYY-MM-DD HH:mm");
+
+  console.log(`Validating reservation time:
+    Now: ${now.format()}
+    Reservation DateTime: ${reservationDateTime.format()}
+    Opening Time: ${openingTime.format()}
+    Closing Time: ${closingTime.format()}`);
+
+  if (!moment(reservationTime, "HH:mm", true).isValid()) {
+    const error = new Error(`'reservation_time' must be a valid time.`);
+    error.status = 400;
+    throw error;
+  }
+
+  if (reservationDateTime.isBefore(now)) {
+    const error = new Error(`'reservation_time' must not be in the past or future.`);
+    error.status = 400;
+    throw error;
+  }
+
+  if (reservationDateTime.isBefore(openingTime) || reservationDateTime.isAfter(closingTime)) {
+    const error = new Error(`'reservation_time' must be within business hours (10:30 AM to 9:30 PM).`);
+    error.status = 400;
+    throw error;
+  }
+}
+
+
 function hasProperties(...properties) {
   return function (req, res, next) {
     const { data = {} } = req.body;
-    const reservationDateTime = moment(
-      `${data.reservation_date} ${data.reservation_time}`,
-      "YYYY-MM-DD HH:mm"
-    );
-    const now = moment();
-    const openingTime = moment(
-      `${data.reservation_date} 10:30`,
-      "YYYY-MM-DD HH:mm"
-    );
-    const closingTime = moment(
-      `${data.reservation_date} 21:30`,
-      "YYYY-MM-DD HH:mm"
-    );
 
     try {
       properties.forEach((property) => {
-        
         if (!data[property]) {
           const error = new Error(`A '${property}' property is required.`);
           error.status = 400;
@@ -99,38 +127,11 @@ function hasProperties(...properties) {
         }
 
         if (property === "reservation_date") {
-          const reservationDate = moment(data[property], "YYYY-MM-DD", true);
-          if (!isValidDate(data[property]) || reservationDate.day() === 2) {
-            const error = new Error(
-              `'reservation_date' restaurant closed, must be a valid date and not a Tuesday.`
-            );
-            error.status = 400;
-            throw error;
-          }
+          validateReservationDate(data[property]);
         }
 
         if (property === "reservation_time") {
-          const reservationTime = moment(data[property], "HH:mm", true);
-          console.log(reservationDateTime)
-          console.log(now)
-          console.log(openingTime)
-          console.log(closingTime)
-          console.log(reservationDateTime.isBefore(now))
-          console.log(reservationDateTime.isBefore(openingTime))
-          console.log(reservationDateTime.isBefore(closingTime))
-          console.log(!isValidTime(data[property]))
-          if (
-            !isValidTime(data[property]) ||
-            reservationDateTime.isBefore(now) ||
-            reservationDateTime.isBefore(openingTime) ||
-            reservationDateTime.isAfter(closingTime)
-          ) {
-            const error = new Error(
-              `'reservation_time' must be a valid time, not in the past, or future, and within business hours (10:30 AM to 9:30 PM).`
-            );
-            error.status = 400;
-            throw error;
-          }
+          validateReservationTime(data["reservation_date"], data[property]);
         }
 
         if (property === "people" && !isValidNumber(data[property])) {
@@ -146,6 +147,7 @@ function hasProperties(...properties) {
     }
   };
 }
+
 
 async function reservationExists(req, res, next) {
   const { reservationId } = req.params;
