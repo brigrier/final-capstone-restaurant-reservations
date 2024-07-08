@@ -3,7 +3,7 @@ const reservationsService = require("../reservations/reservations.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
 
 // VALIDATION
-const validProperties = ["table_name", "capacity"];
+const validProperties = ["table_name", "capacity", "reservation_id"];
 
 function hasValidProps(req, res, next) {
   const { data = {} } = req.body;
