@@ -3,26 +3,23 @@ import { readReservation, updateReservation } from "../utils/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useFormData } from "../new-reservation/FormDataContext";
 import moment from "moment";
+import ReservationForm from "../reservation-form/ReservationForm";
 
 const Edit = () => {
   const { formData, updateFormData } = useFormData();
   const [error, setError] = useState(null);
-  const [reservationDate, ] = useState("");
-  const [reservationTime, ] = useState("");
   const { reservation_id } = useParams();
   const navigate = useNavigate();
-console.log(reservation_id)
+
   useEffect(() => {
     const fetchReservation = async () => {
       try {
-        const reservation = await readReservation(reservation_id); // Corrected function name
+        const reservation = await readReservation(reservation_id);
         updateFormData({
           first_name: reservation.first_name,
           last_name: reservation.last_name,
           mobile_number: reservation.mobile_number,
-          reservation_date: moment(reservation.reservation_date).format(
-            "YYYY-MM-DD"
-            ),
+          reservation_date: moment(reservation.reservation_date).format("YYYY-MM-DD"),
           reservation_time: reservation.reservation_time,
           people: reservation.people,
         });
@@ -33,13 +30,10 @@ console.log(reservation_id)
     };
 
     fetchReservation();
-  }, []);
+  }, [reservation_id, updateFormData]);
 
   const validateForm = () => {
-    const reservationDateTime = moment(
-      `${reservationDate} ${reservationTime}`,
-      "YYYY-MM-DD HH:mm"
-    );
+    const reservationDateTime = moment(`${formData.reservation_date} ${formData.reservation_time}`, "YYYY-MM-DD HH:mm");
     const now = moment();
 
     if (reservationDateTime.day() === 2) {
@@ -48,8 +42,8 @@ console.log(reservation_id)
     if (reservationDateTime.isBefore(now)) {
       return "Reservations cannot be made in the past. Please choose a future date and time.";
     }
-    const openingTime = moment(`${reservationDate} 10:30`, "YYYY-MM-DD HH:mm");
-    const closingTime = moment(`${reservationDate} 21:30`, "YYYY-MM-DD HH:mm");
+    const openingTime = moment(`${formData.reservation_date} 10:30`, "YYYY-MM-DD HH:mm");
+    const closingTime = moment(`${formData.reservation_date} 21:30`, "YYYY-MM-DD HH:mm");
 
     if (reservationDateTime.isBefore(openingTime)) {
       return "Reservations cannot be made before 10:30 AM. Please choose a later time.";
@@ -61,7 +55,6 @@ console.log(reservation_id)
   };
 
   const handleSubmit = async (e) => {
-    const abortController = new AbortController()
     e.preventDefault();
     const newError = validateForm();
     if (newError) {
@@ -69,9 +62,7 @@ console.log(reservation_id)
     } else {
       setError(null);
       try {
-
-        console.log(reservation_id)
-        await updateReservation({...formData, reservation_id}, abortController.signal);
+        await updateReservation({ ...formData, reservation_id });
         navigate(`/dashboard?date=${formData.reservation_date}`);
       } catch (err) {
         setError(err.message);
@@ -79,115 +70,24 @@ console.log(reservation_id)
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    updateFormData({ ...formData, [name]: value });
+  };
+
   const handleCancel = () => {
     navigate(-1);
   };
+
   return (
-    <div style={{marginBottom: "250px"}}>
-      <h2>Edit Reservation</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="first_name">First name</label>
-          <input
-            type="text"
-            id="first_name"
-            name="first_name"
-            value={formData.first_name}
-            onChange={(e) =>
-              updateFormData({ ...formData, first_name: e.target.value })
-            }
-            required
-            className="form-control"
-          />
-        </div>
-        <div>
-          <label htmlFor="last_name">Last name</label>
-          <input
-            type="text"
-            id="last_name"
-            name="last_name"
-            value={formData.last_name}
-            onChange={(e) =>
-                updateFormData({ ...formData, last_name: e.target.value })
-              }
-            required
-            className="form-control"
-          />
-        </div>
-        <div>
-          <label htmlFor="mobile_number">Mobile Number</label>
-          <input
-            type="text"
-            id="mobile_number"
-            name="mobile_number"
-            value={formData.mobile_number}
-            onChange={(e) =>
-                updateFormData({ ...formData, mobile_number: e.target.value })
-              }
-            placeholder="XXX-XXX-XXXX"
-            required
-            className="form-control"
-          />
-        </div>
-        <div>
-          <label htmlFor="reservation_date">Date of reservation</label>
-          <input
-            type="date"
-            id="reservation_date"
-            name="reservation_date"
-            value={formData.reservation_date}
-           // defaultValue={formData.reservationDate}
-            onChange={(e) =>
-                updateFormData({ ...formData, reservation_date: e.target.value })
-              }
-            required
-           // placeholder="YYYY-MM-DD"
-           // pattern="\d{4}-\d{2}-\d{2}"
-            className="form-control"
-          />
-        </div>
-        <div>
-          <label htmlFor="reservation_time">Time of reservation</label>
-          <input
-            type="time"
-            id="reservation_time"
-            name="reservation_time"
-            value={formData.reservation_time}
-            onChange={(e) =>
-                updateFormData({ ...formData, reservation_time: e.target.value })
-              }
-            required
-            placeholder="HH:MM"
-            pattern="[0-9]{2}:[0-9]{2}"
-            className="form-control"
-          />
-        </div>
-        <div>
-          <label htmlFor="people">Number of people in party</label>
-          <input
-            type="number"
-            id="people"
-            name="people"
-            value={formData.people}
-            onChange={(e) =>
-                updateFormData({ ...formData, people: e.target.value })
-              }
-            required
-            className="form-control"
-            min="1"
-          />
-        </div>
-        <div style={{marginTop: "15px"}}>
-        <button className="btn btn-success" style={{marginRight: "10px"}} type="submit">Submit</button>
-        <button className="btn btn-dark" type="button" onClick={handleCancel}>
-          Cancel
-        </button>
-        </div>
-      </form>
-    </div>
+    <ReservationForm
+      formData={formData}
+      handleChange={handleChange}
+      handleSubmit={handleSubmit}
+      handleCancel={handleCancel}
+      error={error}
+    />
   );
 };
 
 export default Edit;
-
