@@ -30,7 +30,7 @@ const Edit = () => {
     };
 
     fetchReservation();
-  }, [reservation_id, updateFormData]);
+  }, [reservation_id]);
 
   const validateForm = () => {
     const reservationDateTime = moment(`${formData.reservation_date} ${formData.reservation_time}`, "YYYY-MM-DD HH:mm");
