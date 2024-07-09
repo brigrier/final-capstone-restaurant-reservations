@@ -48,6 +48,14 @@ function isValidNumber(value) {
   return !isNaN(value) && typeof value === "number";
 }
 
+function isValidPhone(value) {
+  const phoneRegex = /^[\d-]+$/;
+  if (phoneRegex.test(value)) {
+    return true;
+  }
+  return false;
+}
+
 async function isValidStatus(req, res, next) {
   const { status } = req.body.data || {};
   if (!status) {
@@ -71,7 +79,6 @@ async function isReservationFinished(req, res, next) {
   }
   next();
 }
-
 
 function validateReservationDate(reservationDate) {
   const date = moment(reservationDate, "YYYY-MM-DD", true);
@@ -113,7 +120,6 @@ function validateReservationTime(reservationDate, reservationTime) {
   }
 }
 
-
 function hasProperties(...properties) {
   return function (req, res, next) {
     const { data = {} } = req.body;
@@ -139,6 +145,12 @@ function hasProperties(...properties) {
           error.status = 400;
           throw error;
         }
+
+        if (property === "mobile_number" && !isValidPhone(data[property])) {
+          const error = new Error(`'mobile_number' must be a valid phone number.`);
+          error.status = 400;
+          throw error;
+        }
       });
 
       next();
@@ -147,7 +159,6 @@ function hasProperties(...properties) {
     }
   };
 }
-
 
 async function reservationExists(req, res, next) {
   const { reservationId } = req.params;
@@ -195,7 +206,6 @@ async function updateStatus(req, res, next) {
   }
 }
 
-
 // GET reservations
 async function list(req, res, next) {
   const { date, mobile_number } = req.query;
@@ -236,13 +246,13 @@ async function create(req, res, next) {
   }
 }
 
-//  READ
+// READ
 async function read(req, res) {
   const { reservation: data } = res.locals;
   res.json({ data });
 }
 
-//PUT
+// PUT
 async function update(req, res, next) {
   const updatedReservation = {
     ...res.locals.reservation,
