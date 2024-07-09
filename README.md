@@ -7,9 +7,11 @@
 https://final-capstone-restaurant-reservations-wp87.onrender.com/dashboard?date=2024-07-08
 
 ## About the project
-• Developed a full-stack reservation and table management system, utilizing React Router and Express to build a RESTful API for seamless HTTP requests to a PostgreSQL database. 
-• Implemented CRUD functions and utilized knex queries to efficiently handle data interactions with the database. 
-• Leveraged Git for version control, ensuring secure management of changes and preventing sensitive information from being pushed to repositories.
+-Developed a full-stack reservation and table management system, utilizing React Router and Express to build a RESTful API for seamless HTTP requests to a PostgreSQL database. 
+
+-Implemented CRUD functions and utilized knex queries to efficiently handle data interactions with the database. 
+ 
+-Leveraged Git for version control, ensuring secure management of changes and preventing sensitive information from being pushed to repositories.
 
 ## Technology
 React, Node.js, Express, Knex and PostgreSQL.
